@@ -14,9 +14,10 @@
 > main :: IO()  
 > main = do 
 >       putStrLn $ "BEM VINDO AO JOGO DOS PALITINHOS!!!!"
->       putStrLn $ "Escolha modo FACIL ou DIFICIL"
->       dificuldade <- getLine
->       putStrLn $ "Modo de dificuldade " ++ show dificuldade ++ " escolhido"
+>       putStrLn $ "Escolha do modo: digite 0 para FACIL ou digite 1 para DIFICIL"
+>       dificuldadeString <- getLine
+>       let dificuldade = read dificuldadeString :: Int
+>       putStrLn $ "Modo de dificuldade " ++ if dificuldade == 0 then "FACIL" else "DIFICIL" ++ " escolhido"
 >       let num_fileiras = [2, 3 .. 10000]
 >       let num_palitos = [1, 3 .. 7]
 >       fileiras <- randomElement num_fileiras

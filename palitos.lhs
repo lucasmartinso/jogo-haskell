@@ -11,8 +11,9 @@
 >       index <- randomRIO (0, length xs - 1) -- Gera um índice aleatório
 >       return (xs !! index)
 
-> modifyList :: Int -> a -> [a] -> [a]
-> modifyList i novoValor lista = take i lista ++ [novoValor] ++ drop (i+1) lista 
+> removePalito :: Int -> Int -> [Int] -> [Int]
+> removePalito i novoValor lista = take i lista ++ [lista !! i - novoValor] ++ drop (i+1) lista
+
 
 > main :: IO()  
 > main = do 

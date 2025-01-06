@@ -11,7 +11,20 @@
 >       return (xs !! index)
 
 > removePalito :: Int -> Int -> [Int] -> IO[Int]
-> removePalito i novoValor lista = return (take i lista ++ [lista !! i - novoValor] ++ drop (i+1) lista) --remove a qntd de palitos desejada em dada fileira
+> removePalito fileira retirados lista
+>           | (fileira-1) < 0 || (fileira-1) >= length lista = do
+>                   putStrLn $ "ERRO: escolha uma fileira existente!!"
+>                   return lista
+>           | lista !! (fileira-1) == 0 = do
+>                   putStrLn $ "ERRO: fileira escolhida ja esta vazia!!"
+>                   return lista
+>           | retirados < 1 = do 
+>                   putStrLn $ "ERRO: tem que tirar ao menos um palito!!"
+>                   return lista 
+>           | retirados > lista !! (fileira-1) = do 
+>                   putStrLn $ "ERRO: nao eh possivel retirar mais palitos do que existem na fileira!"
+>                   return lista
+>           | otherwise = return (take (fileira-1) lista ++ [lista !! (fileira-1) - retirados] ++ drop fileira lista) --remove a qntd de palitos desejada em dada fileira
 
 > fillFileiras :: Int -> IO [Int]
 > fillFileiras 0 = return []
@@ -29,6 +42,14 @@
 
 > verifyEnd :: [Int] -> IO(Bool) 
 > verifyEnd jogo = return $ foldr (\x acc -> x == 0 && acc) True jogo --verifica o final
+
+-- > playing :: Bool -> Int -> [Int] -> Int
+-- > playing True jogador jogo = return jogador
+-- > playing False jogador jogo = do 
+-- >                           if jogador == 1 then removePalito (length jogo) qntd_pal_aleat else --jogada do usuario
+-- >                           acabou <- verifyEnd jogo
+-- >                           playing acabou !jogador jogo
+
 
 > main :: IO()  
 > main = do 

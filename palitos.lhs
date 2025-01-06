@@ -1,5 +1,5 @@
 -- LUCAS MARTINS OLIVEIRA - 202465058A
--- 
+-- VICTORIA TIEMI FERREIRA YAMASHITA - 202365144AC
 
 ************************** JOGO DOS PALITINHOS **************************************
 

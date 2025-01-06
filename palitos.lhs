@@ -4,15 +4,14 @@
 ************************** JOGO DOS PALITINHOS **************************************
 
 > import System.Random (randomRIO)
-> import Data.Array
 
 > randomElement :: [Int] -> IO Int
 > randomElement xs = do
 >       index <- randomRIO (0, length xs - 1) -- Gera um índice aleatório
 >       return (xs !! index)
 
-> removePalito :: Int -> Int -> [Int] -> [Int]
-> removePalito i novoValor lista = take i lista ++ [lista !! i - novoValor] ++ drop (i+1) lista
+> removePalito :: Int -> Int -> [Int] -> IO[Int]
+> removePalito i novoValor lista = return (take i lista ++ [lista !! i - novoValor] ++ drop (i+1) lista)
 
 > fillFileiras :: Int -> IO [Int]
 > fillFileiras 0 = return []
@@ -41,5 +40,7 @@
 >       let num_fileiras = [2, 3 .. 10]
 >       fileiras <- randomElement num_fileiras
 >       jogo <- fillFileiras fileiras 
->       printGame fileiras jogo
+>       printGame (length jogo) jogo
+>       jogo <- removePalito 0 1 jogo
+>       printGame (length jogo) jogo
 >       putStrLn $ "FIM DE JOGO "

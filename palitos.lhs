@@ -50,6 +50,9 @@
 -- >                           acabou <- verifyEnd jogo
 -- >                           playing acabou !jogador jogo
 
+> verifyInvalidPlay :: [Int] -> [Int] -> IO(Bool)
+> verifyInvalidPlay atual antigo = return (atual == antigo)
+
 
 > main :: IO()  
 > main = do 

@@ -28,6 +28,9 @@
 >               printGame (n-1) jogo
 >               putStrLn $ "Fileira " ++ show n ++ " : " ++ show (jogo !! (n-1))
 
+> verifyEnd :: [Int] -> Bool 
+> verifyEnd = foldr (\x jogo -> x == 0 && jogo) True
+
 > main :: IO()  
 > main = do 
 >       putStrLn $ "BEM VINDO AO JOGO DOS PALITINHOS!!!!"

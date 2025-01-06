@@ -22,6 +22,12 @@
 >               fileira <- fillFileiras(n-1)
 >               return (palitos : fileira)
 
+> printGame :: Int -> [Int] -> IO()
+> printGame 0 jogo = putStrLn $ ""
+> printGame n jogo = do
+>               printGame (n-1) jogo
+>               putStrLn $ "Fileira " ++ show n ++ " : " ++ show (jogo !! (n-1))
+
 > main :: IO()  
 > main = do 
 >       putStrLn $ "BEM VINDO AO JOGO DOS PALITINHOS!!!!"
@@ -29,7 +35,8 @@
 >       dificuldadeString <- getLine
 >       let dificuldade = read dificuldadeString :: Int
 >       putStrLn $ "Modo de dificuldade " ++ (if dificuldade == 0 then "FACIL" else "DIFICIL") ++ " escolhido"
->       let num_fileiras = [2, 3 .. 10000]
+>       let num_fileiras = [2, 3 .. 10]
 >       fileiras <- randomElement num_fileiras
->       putStrLn $ "Numero de fileiras no jogo sera de " ++ show fileiras
-       
+>       jogo <- fillFileiras fileiras 
+>       printGame fileiras jogo
+>       putStrLn $ "FIM DE JOGO "

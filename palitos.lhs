@@ -14,6 +14,13 @@
 > removePalito :: Int -> Int -> [Int] -> [Int]
 > removePalito i novoValor lista = take i lista ++ [lista !! i - novoValor] ++ drop (i+1) lista
 
+> fillFileiras :: Int -> IO [Int]
+> fillFileiras 0 = return []
+> fillFileiras n = do
+>               let num_palitos = [1, 3 .. 7]
+>               palitos <- randomElement num_palitos
+>               fileira <- fillFileiras(n-1)
+>               return (palitos : fileira)
 
 > main :: IO()  
 > main = do 
@@ -23,9 +30,6 @@
 >       let dificuldade = read dificuldadeString :: Int
 >       putStrLn $ "Modo de dificuldade " ++ (if dificuldade == 0 then "FACIL" else "DIFICIL") ++ " escolhido"
 >       let num_fileiras = [2, 3 .. 10000]
->       let num_palitos = [1, 3 .. 7]
 >       fileiras <- randomElement num_fileiras
->       palitos <- randomElement num_palitos
 >       putStrLn $ "Numero de fileiras no jogo sera de " ++ show fileiras
->       putStrLn $ "Numero de palitos no jogo sera de " ++ show palitos
->       
+       

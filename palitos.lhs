@@ -5,13 +5,13 @@
 
 > import System.Random (randomRIO)
 
-> randomElement :: [Int] -> IO(Int)
+> randomElement :: [Int] -> IO(Int) --funcao que pega um valor aleatorio de um vetor --parametros: lista
 > randomElement xs = do
 >       index <- randomRIO (0, length xs - 1) -- Gera um índice aleatório
 >       return (xs !! index)
 
-> removePalito :: Int -> Int -> [Int] -> IO[Int]
-> removePalito fileira retirados lista
+> removePalito :: Int -> Int -> [Int] -> IO[Int] --remove os palitos de uma fileira --parametros: indice da fileira, num de palitos que vai tirar, tabuleiro
+> removePalito fileira retirados lista 
 >           | (fileira-1) < 0 || (fileira-1) >= length lista = do
 >                   putStrLn $ "ERRO: escolha uma fileira existente!!"
 >                   return lista
@@ -26,7 +26,7 @@
 >                   return lista
 >           | otherwise = return (take (fileira-1) lista ++ [lista !! (fileira-1) - retirados] ++ drop fileira lista) --remove a qntd de palitos desejada em dada fileira
 
-> fillFileiras :: Int -> IO [Int]
+> fillFileiras :: Int -> IO [Int] --preenche o tabuleiro --parametros: qntd de fileiras
 > fillFileiras 0 = return []
 > fillFileiras n = do
 >               let num_palitos = [1, 3 .. 7]
@@ -34,42 +34,42 @@
 >               fileira <- fillFileiras(n-1)
 >               return (palitos : fileira)
 
-> printGame :: Int -> [Int] -> IO()
+> printGame :: Int -> [Int] -> IO() --printa o jogo --parametros: qntd de fileiras, jogo
 > printGame 0 jogo = putStrLn $ ""
 > printGame n jogo = do
 >               printGame (n-1) jogo
 >               putStrLn $ "Fileira " ++ show n ++ " : " ++ show (jogo !! (n-1)) --printa as fileiras
 
-> verifyEnd :: [Int] -> IO(Bool) 
-> verifyEnd jogo = return $ foldr (\x acc -> x == 0 && acc) True jogo --verifica o final
+> verifyEnd :: [Int] -> IO(Bool) --verifica se jogo acabou --parametros: jogo
+> verifyEnd jogo = return $ foldr (\x acc -> x == 0 && acc) True jogo 
 
-> verifyInvalidPlay :: [Int] -> [Int] -> IO(Bool)
+> verifyInvalidPlay :: [Int] -> [Int] -> IO(Bool) --verifica se a jogada eh invalida --parametros: jogo modificado, jogo antes de modificado
 > verifyInvalidPlay atual antigo = return (atual == antigo)
 
-> playingEasy :: Bool -> Int -> [Int] -> IO(Int)
-> playingEasy True jogador jogo = return jogador
+> playingEasy :: Bool -> Int -> [Int] -> IO(Int) --aonde acontece o jogo --parametros: boleano(False=jogo continua, True=jogo acaba), jogador(0=usuario, 1=computer), jogo
+> playingEasy True jogador jogo = return jogador 
 > playingEasy False jogador jogo
 >           | jogador == 0 = do
 >                   printGame (length jogo) jogo
 >                   putStrLn $ "SEU TURNO"
 >                   putStrLn $ "Escolha uma fileira que deseja retirar palitos: "
 >                   fileiraStr <- getLine
->                   let fileira = read fileiraStr :: Int
+>                   let fileira = read fileiraStr :: Int --transforma para inteiro
 >                   putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
 >                   palitosStr <- getLine
 >                   let palitos = read palitosStr :: Int
 >                   let estAntigo = jogo
->                   jogo <- removePalito fileira palitos jogo
->                   final <- verifyEnd jogo 
->                   if final == True then playingEasy True 0 jogo else do
->                       invalid <- verifyInvalidPlay estAntigo jogo
->                       if invalid == True then playingEasy False 0 jogo else playingEasy False 1 jogo
+>                   jogo <- removePalito fileira palitos jogo --faz a jogada
+>                   final <- verifyEnd jogo --verifica o final
+>                   if final == True then playingEasy True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
+>                       invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
+>                       if invalid == True then playingEasy False 0 jogo else playingEasy False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
 >                   putStrLn $ "TURNO DA MAQUINA" 
->                   fileira_random <- randomElement [1,2 .. (length jogo)]
->                   if jogo !! (fileira_random-1) == 0 then playingEasy False 1 jogo else do
->                   palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))]
+>                   fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
+>                   if jogo !! (fileira_random-1) == 0 then playingEasy False 1 jogo else do 
+>                   palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
 >                   let estAntigo = jogo
 >                   jogo <- removePalito fileira_random palitos_random jogo
 >                   final <- verifyEnd jogo 
@@ -84,7 +84,7 @@
 >       dificuldadeString <- getLine
 >       let dificuldade = read dificuldadeString :: Int
 >       putStrLn $ "Modo de dificuldade " ++ (if dificuldade == 0 then "FACIL" else "DIFICIL") ++ " escolhido"
->       let num_fileiras = [2, 3 .. 4]
+>       let num_fileiras = [2, 3 .. 2000]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingEasy False 1 jogo

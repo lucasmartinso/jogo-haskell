@@ -118,4 +118,4 @@
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingEasy False 1 jogo
 >       let winner = if vencedor == 0 then "USUARIO" else "MAQUINA"
->       putStrLn $ "FIM DE JOGO EH O VENCEDOR EH O(A) " ++ winner
+>       putStrLn $ "FIM DE JOGO O VENCEDOR EH O(A) " ++ winner

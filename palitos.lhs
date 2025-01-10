@@ -99,7 +99,7 @@
 > validPlayInput :: String -> Maybe Int
 > validPlayInput str =
 >   case reads str of
->       [(n, "")] | n >= 0 -> Just n --se eh 0 ou 1, retorna eles, se nao quebra, --conversao bem sucedida = [(n,"")], so numero sem strings
+>       [(n, "")] | n >= 0 -> Just n --conversao bem sucedida = [(n,"")], so numero inteiro sem strings
 >       _ -> Nothing
 
 > main :: IO()  

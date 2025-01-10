@@ -77,14 +77,24 @@
 >                       invalid <- verifyInvalidPlay estAntigo jogo
 >                       if invalid == True then playingEasy False 1 jogo else playingEasy False 0 jogo
 
+> catchInitGameError :: String -> Maybe Int
+> catchInitGameError str =
+>   case reads str of
+>       [(n, "")] | n == 0 || n == 1 -> Just n --se eh 0 ou 1, retorna eles, se nao quebra
+>       _ -> Nothing
+
 > main :: IO()  
 > main = do 
 >       putStrLn $ "BEM VINDO AO JOGO DOS PALITINHOS!!!!"
 >       putStrLn $ "Escolha do modo: digite 0 para FACIL ou digite 1 para DIFICIL"
 >       dificuldadeString <- getLine
+>       case catchInitGameError dificuldadeString of
+>           Just dificuldade -> putStrLn $ "Modo de dificuldade " ++ if dificuldade == 0 then "FACIL" else "DIFICIL"
+>           Nothing -> do
+>               putStrLn "Entrada inválida! Digite apenas 0 ou 1"
+>               main
 >       let dificuldade = read dificuldadeString :: Int
->       putStrLn $ "Modo de dificuldade " ++ (if dificuldade == 0 then "FACIL" else "DIFICIL") ++ " escolhido"
->       let num_fileiras = [2, 3 .. 2000]
+>       let num_fileiras = [2, 3 .. 10]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingEasy False 1 jogo

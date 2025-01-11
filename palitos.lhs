@@ -100,7 +100,20 @@
 > validPlayInput str =
 >   case reads str of
 >       [(n, "")] | n >= 0 -> Just n --conversao bem sucedida = [(n,"")], so numero inteiro sem strings
->       _ -> Nothing
+>       _ -> Nothing 
+
+> int2bin :: Int -> Int -> Int -> IO(Int)
+> int2bin 0 acc _ = return acc 
+> int2bin n acc peso = 
+>    int2bin (n `div` 2) (acc + (n `mod` 2) * peso) (peso * 10) --peso representa a posicao decimal correta do bit
+
+> binGame :: [Int] -> Int -> IO[Int]
+> binGame jogo 0 = return []
+> binGame jogo n = do 
+>              let decimal = jogo !! (n-1)
+>              bin <- int2bin decimal 0 1
+>              binList <- binGame jogo (n-1)
+>              return (bin : binList)
 
 > main :: IO()  
 > main = do 

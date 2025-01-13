@@ -4,6 +4,7 @@
 ************************** JOGO DOS PALITINHOS **************************************
 
 > import System.Random (randomRIO)
+> import Data.List (findIndex)
 
 > randomElement :: [Int] -> IO(Int) --funcao que pega um valor aleatorio de um vetor --parametros: lista
 > randomElement xs = do
@@ -115,41 +116,68 @@
 >              binList <- binGame jogo (n-1)
 >              return (bin : binList)
 
--- > playingHard :: Bool -> Int -> [Int] -> IO(Int) --aonde acontece o jogo --parametros: boleano(False=jogo continua, True=jogo acaba), jogador(0=usuario, 1=computer), jogo
--- > playingHard True jogador jogo = return jogador 
--- > playingHard False jogador jogo
--- >           | jogador == 0 = do
--- >                   printGame (length jogo) jogo
--- >                   putStrLn $ "SEU TURNO"
--- >                   putStrLn $ "Escolha uma fileira que deseja retirar palitos: "
--- >                   fileiraStr <- getLine
--- >                   isNaturalF <- validateAndPlay fileiraStr "Fileira"
--- >                   if isNaturalF == False then playingHard False 0 jogo else do
--- >                   let fileira = read fileiraStr :: Int --transforma para inteiro
--- >                   putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
--- >                   palitosStr <- getLine
--- >                   isNaturalP <- validateAndPlay palitosStr "Palitos"
--- >                   if isNaturalP == False then playingHard False 0 jogo else do
--- >                   let palitos = read palitosStr :: Int
--- >                   let estAntigo = jogo
--- >                   jogo <- removePalito fileira palitos jogo --faz a jogada
--- >                   final <- verifyEnd jogo --verifica o final
--- >                   if final == True then playingHard True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
--- >                       invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
--- >                       if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
--- >
--- >          | jogador == 1 = do 
--- >                   putStrLn $ "TURNO DA MAQUINA" 
--- >                   binarios <- binGame jogo (length jogo)
--- >                   let somaBin = sum binarios 
--- >                   
+> playingHard :: Bool -> Int -> [Int] -> IO(Int) --aonde acontece o jogo --parametros: boleano(False=jogo continua, True=jogo acaba), jogador(0=usuario, 1=computer), jogo
+> playingHard True jogador jogo = return jogador 
+> playingHard False jogador jogo
+>           | jogador == 0 = do
+>                   printGame (length jogo) jogo
+>                   putStrLn $ "SEU TURNO"
+>                   putStrLn $ "Escolha uma fileira que deseja retirar palitos: "
+>                   fileiraStr <- getLine
+>                   isNaturalF <- validateAndPlay fileiraStr "Fileira"
+>                   if isNaturalF == False then playingHard False 0 jogo else do
+>                   let fileira = read fileiraStr :: Int --transforma para inteiro
+>                   putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
+>                   palitosStr <- getLine
+>                   isNaturalP <- validateAndPlay palitosStr "Palitos"
+>                   if isNaturalP == False then playingHard False 0 jogo else do
+>                   let palitos = read palitosStr :: Int
+>                   let estAntigo = jogo
+>                   jogo <- removePalito fileira palitos jogo --faz a jogada
+>                   final <- verifyEnd jogo --verifica o final
+>                   if final == True then playingHard True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
+>                       invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
+>                       if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
+>
+>          | jogador == 1 = do 
+>                   putStrLn $ "TURNO DA MAQUINA" 
+>                   binariosInvert <- binGame jogo (length jogo)
+>                   let binarios = reverse binariosInvert
+>                   let somaBin = sum binarios 
+>                   casaDecImparInvert <- verifyImpares somaBin
+>                   let casaDecImpar = reverse casaDecImparInvert
+>                   val_vencedor <- bin2int casaDecImpar
+>                   let fileira_vencedor = findElement val_vencedor jogo
+>                   if fileira_vencedor == -1 then do
+>                        fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
+>                        if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
+>                        palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
+>                        let estAntigo = jogo
+>                        jogo <- removePalito fileira_random palitos_random jogo
+>                        final <- verifyEnd jogo 
+>                        if final == True then playingHard True 1 jogo else do
+>                          invalid <- verifyInvalidPlay estAntigo jogo
+>                          if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
+>                   else do 
+>                       jogo <- removePalito (fileira_vencedor + 1) val_vencedor jogo
+>                       final <- verifyEnd jogo 
+>                       if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
+
+
+> findElement :: (Ord a) => a -> [a] -> Int
+> findElement val jogo = case findIndex (>= val) jogo of
+>   Just i  -> i
+>   Nothing -> -1
+
+> bin2int :: [Int] -> IO(Int)
+> bin2int binary = return (foldl(\acc (i,x) -> acc + x*(2^i) ) 0 (zip[0..] (reverse binary)))
 
 > verifyImpares :: Int -> IO[Int]
 > verifyImpares 0 = return []
 > verifyImpares soma = do 
->                       let impar = soma `mod` 2 
->                       impList <- verifyImpares (soma `div` 10)
->                       return (impar : impList)
+>                   let impar = soma `mod` 2 
+>                   impList <- verifyImpares (soma `div` 10)
+>                   return (impar : impList)
 
 > main :: IO()  
 > main = do 

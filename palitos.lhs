@@ -193,6 +193,6 @@
 >       let num_fileiras = [2, 3 .. 10]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
->       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingEasy False 1 jogo
+>       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo
 >       let winner = if vencedor == 0 then "USUARIO" else "MAQUINA"
 >       putStrLn $ "FIM DE JOGO O VENCEDOR EH O(A) " ++ winner

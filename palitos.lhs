@@ -147,8 +147,10 @@
 >                   casaDecImparInvert <- verifyImpares somaBin
 >                   let casaDecImpar = reverse casaDecImparInvert
 >                   val_vencedor <- bin2int casaDecImpar
+>                   putStrLn $ "VALOR VENCEDOR : " ++ show casaDecImpar
 >                   let fileira_vencedor = findElement val_vencedor jogo
->                   if fileira_vencedor == -1 then do
+>                   putStrLn $ "WINNING : " ++ show fileira_vencedor
+>                   if fileira_vencedor == -1 || val_vencedor == 0 then do
 >                        fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
 >                        if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
 >                        palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
@@ -193,7 +195,7 @@
 
 
 > findElement :: (Ord a) => a -> [a] -> Int
-> findElement val jogo = case findIndex (>= val) jogo of
+> findElement val jogo = case findIndex (== val) jogo of
 >   Just i  -> i
 >   Nothing -> -1
 

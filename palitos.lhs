@@ -4,7 +4,6 @@
 ************************** JOGO DOS PALITINHOS **************************************
 
 > import System.Random (randomRIO)
-> import Data.List (findIndex)
 
 > randomElement :: [Int] -> IO(Int) --funcao que pega um valor aleatorio de um vetor --parametros: lista
 > randomElement xs = do
@@ -82,7 +81,7 @@
 >                       invalid <- verifyInvalidPlay estAntigo jogo
 >                       if invalid == True then playingEasy False 1 jogo else playingEasy False 0 jogo
 
-> validateAndPlay :: String -> [Char] -> IO(Bool)
+> validateAndPlay :: [Char] -> [Char] -> IO(Bool)
 > validateAndPlay input tipo = 
 >    case validPlayInput input of
 >        Just palitos -> do
@@ -91,13 +90,13 @@
 >            putStrLn $ "" ++ tipo ++ " tem que inteiro maior do que zero"
 >            return False
 
-> catchInitGameError :: String -> Maybe Int
+> catchInitGameError :: [Char] -> Maybe Int
 > catchInitGameError str =
 >   case reads str of
 >       [(n, "")] | n == 0 || n == 1 -> Just n --se eh 0 ou 1, retorna eles, se nao quebra, --conversao bem sucedida = [(n,"")], so numero sem strings
 >       _ -> Nothing
 
-> validPlayInput :: String -> Maybe Int
+> validPlayInput :: [Char] -> Maybe Int
 > validPlayInput str =
 >   case reads str of
 >       [(n, "")] | n >= 0 -> Just n --conversao bem sucedida = [(n,"")], so numero inteiro sem strings
@@ -163,7 +162,7 @@
 >                       final <- verifyEnd jogo 
 >                       if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
 
-> listToString :: [Int] -> IO(String)
+> listToString :: [Int] -> IO[Char]
 > listToString list = return $ concatMap show list
 
 > intToList :: Int -> IO[Int]
@@ -190,12 +189,6 @@
 >    | x == 0    = comparising xs ys -- Se `x` for 0, continua normalmente
 >    | y == 1    = comparising xs ys -- Se `x` for 1 e `y` for 1, continua
 >    | otherwise = return False
-
-
-> findElement :: (Ord a) => a -> [a] -> Int
-> findElement val jogo = case findIndex (== val) jogo of
->   Just i  -> i
->   Nothing -> -1
 
 > bin2int :: [Int] -> IO(Int)
 > bin2int binary = return (foldl(\acc (i,x) -> acc + x*(2^i) ) 0 (zip[0..] (reverse binary)))

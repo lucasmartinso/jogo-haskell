@@ -166,26 +166,30 @@
 > listToString :: [Int] -> IO(String)
 > listToString list = return $ concatMap show list
 
-> intToList :: Int -> IO [Int]
+> intToList :: Int -> IO[Int]
 > intToList 0 = return []
 > intToList n = do
 >    rest <- intToList (n `div` 10) -- Obtém a parte recursiva dentro do IO
 >    return (rest ++ [n `mod` 10])  -- Concatena e retorna dentro do IO
 
 
--- > matchPatterns :: [Int] -> [Int] -> Int -> Int 
--- > matchPatterns palit_vence jogo 0 = return -1
--- > matchPatterns palit_vence jogo n = do
--- >                                let elem_jogo = jogo !! (n-1)
--- >                                let iguala_bin = length elem_jogo - length palit_vence
--- >                                FUNCAO_DOIDA palit_vence (drop iguala_bin $ reverse elem_jogo)
+> matchPatterns :: [Int] -> [Int] -> Int -> IO(Int) 
+> matchPatterns palit_vence jogo 0 = return (-1)
+> matchPatterns palit_vence jogo n = do
+>                                let elem_jogo = jogo !! (n-1)
+>                                elem_jogo_convertido <- intToList elem_jogo 
+>                                let iguala_bin = length elem_jogo_convertido - length palit_vence
+>                                candidato <- comparising palit_vence (drop iguala_bin $ reverse elem_jogo_convertido)
+>                                if candidato == True then return (n-1) else matchPatterns palit_vence jogo (n-1)
 
-> comparising :: [Int] -> [Int] -> Bool
-> comparising [] [] = True
+> comparising :: [Int] -> [Int] -> IO(Bool)
+> comparising [] [] = return True
+> comparising _ [] = return False
+> comparising [] _ = return False
 > comparising (x:xs) (y:ys)
 >    | x == 0    = comparising xs ys -- Se `x` for 0, continua normalmente
 >    | y == 1    = comparising xs ys -- Se `x` for 1 e `y` for 1, continua
->    | otherwise = False
+>    | otherwise = return False
 
 
 > findElement :: (Ord a) => a -> [a] -> Int

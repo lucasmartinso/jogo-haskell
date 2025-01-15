@@ -163,6 +163,30 @@
 >                       final <- verifyEnd jogo 
 >                       if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
 
+> listToString :: [Int] -> IO(String)
+> listToString list = return $ concatMap show list
+
+> intToList :: Int -> IO [Int]
+> intToList 0 = return []
+> intToList n = do
+>    rest <- intToList (n `div` 10) -- Obtém a parte recursiva dentro do IO
+>    return (rest ++ [n `mod` 10])  -- Concatena e retorna dentro do IO
+
+
+-- > matchPatterns :: [Int] -> [Int] -> Int -> Int 
+-- > matchPatterns palit_vence jogo 0 = return -1
+-- > matchPatterns palit_vence jogo n = do
+-- >                                let elem_jogo = jogo !! (n-1)
+-- >                                let iguala_bin = length elem_jogo - length palit_vence
+-- >                                FUNCAO_DOIDA palit_vence (drop iguala_bin $ reverse elem_jogo)
+
+> comparising :: [Int] -> [Int] -> Bool
+> comparising [] [] = True
+> comparising (x:xs) (y:ys)
+>    | x == 0    = comparising xs ys -- Se `x` for 0, continua normalmente
+>    | y == 1    = comparising xs ys -- Se `x` for 1 e `y` for 1, continua
+>    | otherwise = False
+
 
 > findElement :: (Ord a) => a -> [a] -> Int
 > findElement val jogo = case findIndex (>= val) jogo of
@@ -190,7 +214,7 @@
 >               putStrLn "Entrada inválida! Digite apenas 0 ou 1"
 >               main
 >       let dificuldade = read dificuldadeString :: Int
->       let num_fileiras = [2, 3 .. 10]
+>       let num_fileiras = [2, 3 .. 4]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo

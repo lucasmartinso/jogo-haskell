@@ -147,9 +147,7 @@
 >                   casaDecImparInvert <- verifyImpares somaBin
 >                   let casaDecImpar = reverse casaDecImparInvert
 >                   val_vencedor <- bin2int casaDecImpar
->                   putStrLn $ "VALOR VENCEDOR : " ++ show casaDecImpar
->                   let fileira_vencedor = findElement val_vencedor jogo
->                   putStrLn $ "WINNING : " ++ show fileira_vencedor
+>                   fileira_vencedor <- matchPatterns casaDecImpar binarios (length jogo)
 >                   if fileira_vencedor == -1 || val_vencedor == 0 then do
 >                        fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
 >                        if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
@@ -181,7 +179,7 @@
 >                                let elem_jogo = jogo !! (n-1)
 >                                elem_jogo_convertido <- intToList elem_jogo 
 >                                let iguala_bin = length elem_jogo_convertido - length palit_vence
->                                candidato <- comparising palit_vence (drop iguala_bin $ reverse elem_jogo_convertido)
+>                                candidato <- comparising palit_vence (drop iguala_bin $ elem_jogo_convertido)
 >                                if candidato == True then return (n-1) else matchPatterns palit_vence jogo (n-1)
 
 > comparising :: [Int] -> [Int] -> IO(Bool)
@@ -211,6 +209,7 @@
 
 > main :: IO()  
 > main = do 
+>       putStrLn $ ""
 >       putStrLn $ "BEM VINDO AO JOGO DOS PALITINHOS!!!!"
 >       putStrLn $ "Escolha do modo: digite 0 para FACIL, ou digite 1 para DIFICIL"
 >       dificuldadeString <- getLine

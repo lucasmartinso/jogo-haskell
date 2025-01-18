@@ -197,7 +197,6 @@
 >                       let maior = maximum jogo 
 >                       let menor = minExceptZero jogo
 >                       let x = maior - menor
->                       putStrLn $ "X: " ++ show x
 >                       fileira <- indexBigger jogo
 >                       return (fileira, x)    
 
@@ -222,18 +221,18 @@
 >                   fileiraStr <- getLine
 >                   isNaturalF <- validateAndPlay fileiraStr "Fileira"
 >                   if isNaturalF == False then playingEasy False 0 jogo else do
->                   let fileira = read fileiraStr :: Int --transforma para inteiro
->                   putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
->                   palitosStr <- getLine
->                   isNaturalP <- validateAndPlay palitosStr "Palitos"
->                   if isNaturalP == False then playingEasy False 0 jogo else do
->                   let palitos = read palitosStr :: Int
->                   let estAntigo = jogo
->                   jogo <- removePalito fileira palitos jogo --faz a jogada
->                   final <- verifyEnd jogo --verifica o final
->                   if final == True then playingEasy True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
->                       invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
->                       if invalid == True then playingEasy False 0 jogo else playingEasy False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
+>                       let fileira = read fileiraStr :: Int --transforma para inteiro
+>                       putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
+>                       palitosStr <- getLine
+>                       isNaturalP <- validateAndPlay palitosStr "Palitos"
+>                       if isNaturalP == False then playingEasy False 0 jogo else do
+>                           let palitos = read palitosStr :: Int
+>                           let estAntigo = jogo
+>                           jogo <- removePalito fileira palitos jogo --faz a jogada
+>                           final <- verifyEnd jogo --verifica o final
+>                           if final == True then playingEasy True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
+>                               invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
+>                               if invalid == True then playingEasy False 0 jogo else playingEasy False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
 >                   putStrLn $ "TURNO DA MAQUINA" 
@@ -262,18 +261,18 @@
 >                   fileiraStr <- getLine
 >                   isNaturalF <- validateAndPlay fileiraStr "Fileira"
 >                   if isNaturalF == False then playingHard False 0 jogo else do
->                   let fileira = read fileiraStr :: Int --transforma para inteiro
->                   putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
->                   palitosStr <- getLine
->                   isNaturalP <- validateAndPlay palitosStr "Palitos"
->                   if isNaturalP == False then playingHard False 0 jogo else do
->                   let palitos = read palitosStr :: Int
->                   let estAntigo = jogo
->                   jogo <- removePalito fileira palitos jogo --faz a jogada
->                   final <- verifyEnd jogo --verifica o final
->                   if final == True then playingHard True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
->                       invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
->                       if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
+>                       let fileira = read fileiraStr :: Int --transforma para inteiro
+>                       putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
+>                       palitosStr <- getLine
+>                       isNaturalP <- validateAndPlay palitosStr "Palitos"
+>                       if isNaturalP == False then playingHard False 0 jogo else do
+>                       let palitos = read palitosStr :: Int
+>                       let estAntigo = jogo
+>                       jogo <- removePalito fileira palitos jogo --faz a jogada
+>                       final <- verifyEnd jogo --verifica o final
+>                       if final == True then playingHard True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
+>                           invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
+>                           if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
 >                   printGame (length jogo) jogo
@@ -312,13 +311,13 @@
 >                        else do
 >                           fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
 >                           if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
->                           palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
->                           let estAntigo = jogo
->                           jogo <- removePalito fileira_random palitos_random jogo
->                           final <- verifyEnd jogo 
->                           if final == True then playingHard True 1 jogo else do
->                               invalid <- verifyInvalidPlay estAntigo jogo
->                               if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
+>                               palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
+>                               let estAntigo = jogo
+>                               jogo <- removePalito fileira_random palitos_random jogo
+>                               final <- verifyEnd jogo 
+>                               if final == True then playingHard True 1 jogo else do
+>                                   invalid <- verifyInvalidPlay estAntigo jogo
+>                                   if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
 >                   else do 
 >                       jogo <- removePalito (fileira_vencedor + 1) val_vencedor jogo
 >                       final <- verifyEnd jogo 
@@ -342,7 +341,7 @@
 >               putStrLn "Entrada inválida! Digite apenas 0 ou 1"
 >               main
 >       let dificuldade = read dificuldadeString :: Int
->       let num_fileiras = [2, 3 .. 10]
+>       let num_fileiras = [2, 3 .. 1000]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo

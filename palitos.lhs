@@ -4,6 +4,8 @@
 ************************** JOGO DOS PALITINHOS **************************************
 
 > import System.Random (randomRIO)
+> import Data.List (elemIndex)
+
 
 ***FUNCAO DE ALEATORIZACAO****
 --parametros: lista de inteiros
@@ -185,6 +187,25 @@
 >    | y == 1    = comparising xs ys -- Se `x` for 1 e `y` for 1, continua
 >    | otherwise = return False
 
+> minExceptZero :: (Ord a, Num a) => [a] -> a
+> minExceptZero lista =
+>    let filtered = filter (/= 0) lista
+>    in if null filtered then 0 else minimum filtered
+
+> normalizeBinRetire :: [Int] -> IO(Int, Int)
+> normalizeBinRetire jogo = do 
+>                       let maior = maximum jogo 
+>                       let menor = minExceptZero jogo
+>                       let x = maior - menor
+>                       let retirar = maior - x
+>                       fileira <- indexBigger jogo
+>                       return (fileira, retirar)    
+
+> indexBigger :: (Ord a) => [a] -> IO(Int)
+> indexBigger lista = return $ case elemIndex (maximum lista) lista of
+>    Just i  -> i
+>    Nothing -> -1
+
 
 ***MODO FACIL***
 --representa modo de jogo facil, usa as funcoes previamente implementadas
@@ -255,6 +276,7 @@
 >                       if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
+>                   printGame (length jogo) jogo
 >                   putStrLn $ "TURNO DA MAQUINA" 
 >                   binariosInvert <- binGame jogo (length jogo)
 >                   let binarios = reverse binariosInvert
@@ -263,16 +285,22 @@
 >                   let casaDecImpar = reverse casaDecImparInvert
 >                   val_vencedor <- bin2int casaDecImpar
 >                   fileira_vencedor <- matchPatterns casaDecImpar binarios (length jogo)
->                   if fileira_vencedor == -1 || val_vencedor == 0 then do
->                        fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
->                        if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
->                        palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
->                        let estAntigo = jogo
->                        jogo <- removePalito fileira_random palitos_random jogo
->                        final <- verifyEnd jogo 
->                        if final == True then playingHard True 1 jogo else do
->                          invalid <- verifyInvalidPlay estAntigo jogo
->                          if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
+>                   if fileira_vencedor == (-1) || val_vencedor == 0 then do
+>                        if val_vencedor /= 0 then do
+>                           ajuste_val_venc <- normalizeBinRetire jogo
+>                           jogo <- removePalito ((fst ajuste_val_venc) + 1) (snd ajuste_val_venc) jogo
+>                           final <- verifyEnd jogo 
+>                           if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
+>                        else do
+>                           fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
+>                           if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
+>                           palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
+>                           let estAntigo = jogo
+>                           jogo <- removePalito fileira_random palitos_random jogo
+>                           final <- verifyEnd jogo 
+>                           if final == True then playingHard True 1 jogo else do
+>                               invalid <- verifyInvalidPlay estAntigo jogo
+>                               if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
 >                   else do 
 >                       jogo <- removePalito (fileira_vencedor + 1) val_vencedor jogo
 >                       final <- verifyEnd jogo 

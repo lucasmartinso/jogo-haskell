@@ -275,7 +275,7 @@
 >                           if invalid == True then playingHard False 0 jogo 0 else playingHard False 1 jogo 0 --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
->                   putStrLn $ "TURNO DA MAQUINA" 
+>                   if try == 0 then putStrLn $ "TURNO DA MAQUINA" else return ()
 >                   binariosInvert <- binGame jogo (length jogo)
 >                   let binarios = reverse binariosInvert
 >                   let somaBin = sum binarios 
@@ -341,7 +341,7 @@
 >               putStrLn "Entrada inválida! Digite apenas 0 ou 1"
 >               main
 >       let dificuldade = read dificuldadeString :: Int
->       let num_fileiras = [2, 3 .. 10000]
+>       let num_fileiras = [2, 3 .. 100]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
 >       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo 0

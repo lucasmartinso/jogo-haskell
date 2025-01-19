@@ -251,31 +251,30 @@
 --parametros: Flag de fim de jogo, jogador que faz a proxima jogada
 --retorna: jogador vencedor
 
-> playingHard :: Bool -> Int -> [Int] -> IO(Int) --aonde acontece o jogo --parametros: boleano(False=jogo continua, True=jogo acaba), jogador(0=usuario, 1=computer), jogo
-> playingHard True jogador jogo = return jogador 
-> playingHard False jogador jogo
+> playingHard :: Bool -> Int -> [Int] -> Int -> IO(Int) --aonde acontece o jogo --parametros: boleano(False=jogo continua, True=jogo acaba), jogador(0=usuario, 1=computer), jogo
+> playingHard True jogador jogo try = return jogador 
+> playingHard False jogador jogo try
 >           | jogador == 0 = do
 >                   printGame (length jogo) jogo
 >                   putStrLn $ "SEU TURNO"
 >                   putStrLn $ "Escolha uma fileira que deseja retirar palitos: "
 >                   fileiraStr <- getLine
 >                   isNaturalF <- validateAndPlay fileiraStr "Fileira"
->                   if isNaturalF == False then playingHard False 0 jogo else do
+>                   if isNaturalF == False then playingHard False 0 jogo 0 else do
 >                       let fileira = read fileiraStr :: Int --transforma para inteiro
 >                       putStrLn $ "Escolha a quantidade de palitos que deseja remover da fileira " ++ show fileira 
 >                       palitosStr <- getLine
 >                       isNaturalP <- validateAndPlay palitosStr "Palitos"
->                       if isNaturalP == False then playingHard False 0 jogo else do
+>                       if isNaturalP == False then playingHard False 0 jogo 0 else do
 >                       let palitos = read palitosStr :: Int
 >                       let estAntigo = jogo
 >                       jogo <- removePalito fileira palitos jogo --faz a jogada
 >                       final <- verifyEnd jogo --verifica o final
->                       if final == True then playingHard True 0 jogo else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
+>                       if final == True then playingHard True 0 jogo 0 else do --se acaba chama a funcao dnv passando flag de encerramento(True), e o jogador da ultima jogada
 >                           invalid <- verifyInvalidPlay estAntigo jogo --verifica se foi uma jogada valida, se sim continua e passa para o proximo jogador
->                           if invalid == True then playingHard False 0 jogo else playingHard False 1 jogo --se nao foi valida retorna ao jogador atual p refazer a jogada
+>                           if invalid == True then playingHard False 0 jogo 0 else playingHard False 1 jogo 0 --se nao foi valida retorna ao jogador atual p refazer a jogada
 >
 >          | jogador == 1 = do 
->                   printGame (length jogo) jogo
 >                   putStrLn $ "TURNO DA MAQUINA" 
 >                   binariosInvert <- binGame jogo (length jogo)
 >                   let binarios = reverse binariosInvert
@@ -285,7 +284,17 @@
 >                   val_vencedor <- bin2int casaDecImpar
 >                   fileira_vencedor <- matchPatterns casaDecImpar binarios (length jogo)
 >                   if fileira_vencedor == (-1) || val_vencedor == 0 then do
->                        if val_vencedor /= 0 then do
+>                        if val_vencedor == 0 then do
+>                           fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
+>                           if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo 0 else do 
+>                               palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
+>                               let estAntigo = jogo
+>                               jogo <- removePalito fileira_random palitos_random jogo
+>                               final <- verifyEnd jogo 
+>                               if final == True then playingHard True 1 jogo 0 else do
+>                                   invalid <- verifyInvalidPlay estAntigo jogo
+>                                   if invalid == True then playingHard False 1 jogo 0 else playingHard False 0 jogo 0
+>                        else do
 >                           let ant_state = jogo
 >                           ajuste_val_venc <- normalizeBinRetire jogo
 >                           jogo <- removePalito ((fst ajuste_val_venc) + 1) (snd ajuste_val_venc) jogo
@@ -294,34 +303,25 @@
 >                           let isPar = sum impares
 >                           if isPar == 0 then do
 >                               final <- verifyEnd jogo 
->                               if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
+>                               if final == True then playingHard True 1 jogo 0 else do playingHard False 0 jogo 0
 >                           else do 
 >                               fileira_random <- randomElement [1,2 .. (length ant_state)] --fileira aleatoria
->                               if ant_state !! (fileira_random-1) == 0 then playingHard False 1 ant_state else do 
+>                               if ant_state !! (fileira_random-1) == 0 then playingHard False 1 ant_state (try + 1) else do 
 >                                   palitos_random <- randomElement [1,2 .. (ant_state !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
 >                                   let estAntigo = ant_state
 >                                   jogo <- removePalito fileira_random palitos_random ant_state
 >                                   final <- verifyEnd jogo 
 >                                   binary <- binGame jogo (length jogo)
 >                                   impares <- verifyImpares (sum binary) 
->                                   if (sum impares) /= 0 then playingHard False 1 estAntigo else do  
->                                       if final == True then playingHard True 1 jogo else do
+>                                   let newImpares = if try >= 80 then [0,0,0] else impares
+>                                   if (sum newImpares) /= 0 then playingHard False 1 estAntigo (try + 1) else do  
+>                                       if final == True then playingHard True 1 jogo 0 else do
 >                                           invalid <- verifyInvalidPlay estAntigo jogo
->                                           if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
->                        else do
->                           fileira_random <- randomElement [1,2 .. (length jogo)] --fileira aleatoria
->                           if jogo !! (fileira_random-1) == 0 then playingHard False 1 jogo else do 
->                               palitos_random <- randomElement [1,2 .. (jogo !! (fileira_random-1))] --pega um valor aleatorio dada a qntd de palitos daquela fileira selecionada aleatoriamente
->                               let estAntigo = jogo
->                               jogo <- removePalito fileira_random palitos_random jogo
->                               final <- verifyEnd jogo 
->                               if final == True then playingHard True 1 jogo else do
->                                   invalid <- verifyInvalidPlay estAntigo jogo
->                                   if invalid == True then playingHard False 1 jogo else playingHard False 0 jogo
+>                                           if invalid == True then playingHard False 1 jogo (try + 1) else playingHard False 0 jogo 0
 >                   else do 
 >                       jogo <- removePalito (fileira_vencedor + 1) val_vencedor jogo
 >                       final <- verifyEnd jogo 
->                       if final == True then playingHard True 1 jogo else do playingHard False 0 jogo
+>                       if final == True then playingHard True 1 jogo 0 else do playingHard False 0 jogo 0
 
 
 **MAIN**
@@ -341,9 +341,9 @@
 >               putStrLn "Entrada inválida! Digite apenas 0 ou 1"
 >               main
 >       let dificuldade = read dificuldadeString :: Int
->       let num_fileiras = [2, 3 .. 1000]
+>       let num_fileiras = [2, 3 .. 10000]
 >       fileiras <- randomElement num_fileiras --vai gerar a qntd de fileiras
 >       jogo <- fillFileiras fileiras  --cada elemento da lista vai ser uma fileira com a qntd de palitos nessa
->       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo
+>       vencedor <- if dificuldade == 0 then playingEasy False 0 jogo else playingHard False 1 jogo 0
 >       let winner = if vencedor == 0 then "USUARIO" else "MAQUINA"
 >       putStrLn $ "FIM DE JOGO O VENCEDOR EH O(A) " ++ winner

@@ -3,11 +3,11 @@
 This is a simple nim game written in Haskell. It uses simple IO () and represents the nim-board that is randomly generated as a list of the type [5,4,3,2,1] where each number is the number of sticks in that row.
 
 ````
-1: * * * * * 
-2: * * * * 
-3: * * * 
-4: * * 
-5: * 
+Fileira 1 : 5
+Fileira 2 : 3
+Fileira 3 : 1
+Fileira 4 : 3
+Fileira 5 : 7
 ````
 ## Rules
 

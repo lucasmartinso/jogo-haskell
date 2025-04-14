@@ -21,7 +21,7 @@ Two players take it turn about to remove one or more sticks from the end of a si
 ## Inicialization 
 ```
 ghci 
-: l palitos . lhs
+:l palitos.lhs
 main
 ```
 
